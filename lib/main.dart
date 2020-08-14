@@ -1,5 +1,6 @@
 import 'package:covid_19/constant.dart';
 import 'package:covid_19/widgets/counter.dart';
+import 'package:covid_19/widgets/data_dashboard.dart';
 import 'package:covid_19/widgets/my_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -173,52 +174,25 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Counter(
-                              color: kInfectedColor,
-                              number: 75647,
-                              title: "Infected",
-                            ),
-                            Counter(
-                              color: kDeathColor,
-                              number: 9906,
-                              title: "Deaths",
-                            ),
-                            Counter(
-                              color: kRecovercolor,
-                              number: 18576,
-                              title: "Recovered",
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Counter(
-                              color: kInHospital,
-                              number: 75647,
-                              title: "In hospital",
-                            ),
-                            Counter(
-                              color: kTestColor,
-                              number: 9906,
-                              title: "Tested",
-                            ),
-                            Counter(
-                              color: kTotalInHospital,
-                              number: 18576,
-                              title: "Total hospital",
-                            ),
-                          ],
-                        ),
-                      ],
+                    child: Container(
+                      child: FutureBuilder<Covid>(
+                        future: covidData,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return DataDashboard(
+                              deaths: snapshot.data.deaths,
+                              recovered: 0,
+                              infected: snapshot.data.infected,
+                              inHospital: snapshot.data.hospitalized,
+                              tested: snapshot.data.tested,
+                              totalInHospital: snapshot.data.totalInHospital,
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+                          return CircularProgressIndicator();
+                        },
+                      ),
                     ),
                   ),
                   SizedBox(height: 20),
