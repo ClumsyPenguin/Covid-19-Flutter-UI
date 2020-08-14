@@ -11,6 +11,9 @@ const kRecovercolor = Color(0xFF36C12C);
 const kPrimaryColor = Color(0xFF3382CC);
 final kShadowColor = Color(0xFFB7B7B7).withOpacity(.16);
 final kActiveShadowColor = Color(0xFF4056C6).withOpacity(.15);
+final kTestColor = Color(0xFF3891A6);
+final kTotalInHospital = Color(0xFFCBCBD4);
+final kInHospital = Color(0xFFA5FFD6);
 
 // Text Style
 const kHeadingTextStyle = TextStyle(
