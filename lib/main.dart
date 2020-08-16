@@ -1,11 +1,12 @@
 import 'package:covid_19/constant.dart';
-import 'package:covid_19/widgets/counter.dart';
 import 'package:covid_19/widgets/data_dashboard.dart';
 import 'package:covid_19/widgets/my_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import './Models/Covid.dart';
+import 'package:intl/intl.dart';
+
 import 'dart:convert';
 
 void main() => runApp(MyApp());
@@ -142,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: kTitleTextstyle,
                             ),
                             TextSpan(
-                              text: DateTime.now().toString(),
+                              text: DateFormat.yMMMd().format(DateTime.now()),
                               style: TextStyle(
                                 color: kTextLightColor,
                               ),
