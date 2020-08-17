@@ -3,20 +3,12 @@ import './counter.dart';
 import 'package:covid_19/constant.dart';
 
 class DataDashboard extends StatelessWidget {
-  final int infected;
+  final int confirmed;
   final int deaths;
   final int recovered;
-  final int inHospital;
-  final int tested;
-  final int totalInHospital;
+  final int active;
 
-  DataDashboard(
-      {this.infected,
-      this.deaths,
-      this.recovered,
-      this.inHospital,
-      this.tested,
-      this.totalInHospital});
+  DataDashboard({this.active, this.deaths, this.recovered, this.confirmed});
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +20,8 @@ class DataDashboard extends StatelessWidget {
             children: <Widget>[
               Counter(
                 color: kInfectedColor,
-                number: infected,
-                title: "Infected",
+                number: active,
+                title: "Active",
               ),
               Counter(
                 color: kDeathColor,
@@ -40,29 +32,6 @@ class DataDashboard extends StatelessWidget {
                 color: kRecovercolor,
                 number: recovered,
                 title: "Recovered",
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 10),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Counter(
-                color: kInHospital,
-                number: inHospital,
-                title: "In hospital",
-              ),
-              Counter(
-                color: kTestColor,
-                number: tested,
-                title: "Tested",
-              ),
-              Counter(
-                color: kTotalInHospital,
-                number: totalInHospital,
-                title: "Total hospital",
               ),
             ],
           ),

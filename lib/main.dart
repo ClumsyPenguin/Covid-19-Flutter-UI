@@ -43,7 +43,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-  List<String> _countryList = ['Belgium', 'France', 'United States', 'Germany'];
+  List<String> _countryList = [
+    'Belgium',
+    'France',
+    'Spain',
+    'Germany',
+    'Austria',
+    'Netherlands'
+  ];
   Future<Covid> covidData;
   String _chosenValue;
   final controller = ScrollController();
@@ -52,21 +59,23 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    covidData = fetchData();
     super.initState();
     controller.addListener(onScroll);
+    _chosenValue = _countryList[0];
+    covidData = fetchData(_chosenValue);
   }
 
   void _onRefresh() async {
     // monitor network fetch
-    await fetchData();
+    await fetchData(_chosenValue);
+    setState(() {});
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 
   void _onLoading() async {
     // monitor network fetch
-    await fetchData();
+    await fetchData(_chosenValue);
     // if failed,use loadFailed(),if no data return,use LoadNodata()
     if (mounted) setState(() {});
     _refreshController.loadComplete();
@@ -85,14 +94,17 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<Covid> fetchData() async {
-    final response = await http.get(
-        'https://api.apify.com/v2/key-value-stores/apVM8aZ8hKZFvnKm7/records/LATEST?disableRedirect=true');
+  Future<Covid> fetchData(String country) async {
+    final String url = 'https://api.covid19api.com/country/$country';
+    final response = await http.get(url);
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      return Covid.fromJson(json.decode(response.body));
+      String jsonRes = response.body;
+      String lastResSplit = jsonRes.split("00Z\"},").last;
+      String lastRes = lastResSplit.substring(0, lastResSplit.length - 2);
+      return Covid.fromJson(json.decode(lastRes));
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -144,8 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         items: <String>[
                           'Belgium',
                           'France',
-                          'United States',
+                          'Spain',
                           'Germany',
+                          'Austria',
+                          'Netherlands'
                         ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -155,6 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onChanged: (value) {
                           setState(() {
                             _chosenValue = value;
+                            fetchData(_chosenValue);
                           });
                         },
                       ),
@@ -210,24 +225,25 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                       child: Container(
-                        child: FutureBuilder<Covid>(
-                          future: covidData,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return DataDashboard(
-                                deaths: snapshot.data.deaths,
-                                recovered: 0,
-                                infected: snapshot.data.infected,
-                                inHospital: snapshot.data.hospitalized,
-                                tested: snapshot.data.tested,
-                                totalInHospital: snapshot.data.totalInHospital,
+                        child: StreamBuilder<Object>(
+                            stream: null,
+                            builder: (context, snapshot) {
+                              return FutureBuilder<Covid>(
+                                future: covidData,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return DataDashboard(
+                                      deaths: snapshot.data.deaths,
+                                      recovered: snapshot.data.recovered,
+                                      active: snapshot.data.active,
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Text("${snapshot.error}");
+                                  }
+                                  return CircularProgressIndicator();
+                                },
                               );
-                            } else if (snapshot.hasError) {
-                              return Text("${snapshot.error}");
-                            }
-                            return CircularProgressIndicator();
-                          },
-                        ),
+                            }),
                       ),
                     ),
                     SizedBox(height: 20),

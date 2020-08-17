@@ -1,33 +1,27 @@
 class Covid {
   final String country;
-  final int infected;
+  final int confirmed;
   final int deaths;
-  final String recovered;
-  final int hospitalized;
-  final int totalInHospital;
-  final int tested;
+  final int recovered;
+  final int active;
   final String lastUpdatedFromSource;
 
   Covid({
     this.country,
-    this.infected,
+    this.active,
+    this.confirmed,
     this.deaths,
     this.recovered,
-    this.totalInHospital,
-    this.hospitalized,
-    this.tested,
     this.lastUpdatedFromSource,
   });
 
   factory Covid.fromJson(Map<String, dynamic> json) {
     return Covid(
-        country: json['country'],
-        infected: json['infected'],
-        deaths: json['deaths'],
-        tested: json['tested'],
-        hospitalized: json['totalHospitalized'],
-        totalInHospital: json['totalInToHospital'],
-        recovered: json['recovered'],
+        country: json['Country'],
+        active: json['Active'],
+        confirmed: json['Confirmed'],
+        recovered: json['Recovered'],
+        deaths: json['Deaths'],
         lastUpdatedFromSource: json['lastUpdatedAtSource']);
   }
 }
